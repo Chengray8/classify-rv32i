@@ -60,9 +60,18 @@ write_matrix:
 
     li t0, 2
     bne a0, t0, fwrite_error
-
+#################################################################################
     # mul s4, s2, s3   # s4 = total elements
     # FIXME: Replace 'mul' with your own implementation
+    li s4 ,0
+mul_loop:
+    andi t1, s3, 1      # t1 = s3 & 1, check the least significant bit of the multiplier (Q0)
+    beqz t1, skip_add   # If the least significant bit of t3 is 0, skip the addition
+    add  s4, s4, s2     # If the least significant bit is 1, add the multiplicand to the result
+skip_add:
+    slli s2, s2, 1      # Left shift the multiplicand by 1, equivalent to multiplying by 2
+    srli s3, s3, 1      # Right shift the multiplier by 1, equivalent to dividing by 2
+    bnez s3, mul_loop   # Repeat until all bits are processed
 
     # write matrix data to file
     mv a0, s0

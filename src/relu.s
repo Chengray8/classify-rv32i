@@ -15,7 +15,7 @@
 #   None - Original array is modified directly
 #
 # Validation:
-#   Requires non-empty array (length ≥ 1)
+#   Requires non-empty array (length * 1)
 #   Terminates (code 36) if validation fails
 #
 # Example:
@@ -25,11 +25,19 @@
 relu:
     li t0, 1             
     blt a1, t0, error     
-    li t1, 0             
 
 loop_start:
     # TODO: Add your own implementation
+    beqz a1, return                  # Determine array is accessed over or not.
+    lw   t3, 0(a0)                   # Load value of array
+    addi a1, a1, -1                  # a1--
+    addi a0, a0,  4                  # a0+4
+    bge  t3, zero, loop_start        # Determine value is positive numbers or negative numbers.
+    sw   zero, -4(a0)                # Store 0 back
+    j    loop_start
 
+return:
+    jr  ra
 error:
     li a0, 36          
     j exit          
