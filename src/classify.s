@@ -166,7 +166,18 @@ classify:
     
     lw t0, 0(s3)
     lw t1, 0(s8)
+#################################################################################
     # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
+    li a0 ,0
+mul_loopa:
+    andi t2, t1, 1      # t2 = t1 & 1, check the least significant bit of the multiplier (Q0)
+    beqz t2, skip_adda   # If the least significant bit of t3 is 0, skip the addition
+    add  a0, a0, t0     # If the least significant bit is 1, add the multiplicand to the result
+skip_adda:
+    slli t0, t0, 1      # Left shift the multiplicand by 1, equivalent to multiplying by 2
+    srli t1, t1, 1      # Right shift the multiplier by 1, equivalent to dividing by 2
+    bnez t1, mul_loopa   # Repeat until all bits are processed
+#################################################################################
     slli a0, a0, 2
     jal malloc 
     beq a0, x0, error_malloc
@@ -203,9 +214,19 @@ classify:
     mv a0, s9 # move h to the first argument
     lw t0, 0(s3)
     lw t1, 0(s8)
+#################################################################################
     # mul a1, t0, t1 # length of h array and set it as second argument
     # FIXME: Replace 'mul' with your own implementation
-    
+    li a1 ,0
+mul_loopb:
+    andi t2, t1, 1      # t2 = t1 & 1, check the least significant bit of the multiplier (Q0)
+    beqz t2, skip_addb   # If the least significant bit of t3 is 0, skip the addition
+    add  a1 ,a1, t0     # If the least significant bit is 1, add the multiplicand to the result
+skip_addb:
+    slli t0, t0, 1      # Left shift the multiplicand by 1, equivalent to multiplying by 2
+    srli t1, t1, 1      # Right shift the multiplier by 1, equivalent to dividing by 2
+    bnez t1, mul_loopb   # Repeat until all bits are processed
+#################################################################################
     jal relu
     
     lw a0, 0(sp)
@@ -226,7 +247,18 @@ classify:
     
     lw t0, 0(s3)
     lw t1, 0(s6)
+#################################################################################
     # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
+    li a0 ,0
+mul_loopc:
+    andi t2, t1, 1      # t2 = t1 & 1, check the least significant bit of the multiplier (Q0)
+    beqz t2, skip_addc   # If the least significant bit of t3 is 0, skip the addition
+    add  a0, a0, t0     # If the least significant bit is 1, add the multiplicand to the result
+skip_addc:
+    slli t0, t0, 1      # Left shift the multiplicand by 1, equivalent to multiplying by 2
+    srli t1, t1, 1      # Right shift the multiplier by 1, equivalent to dividing by 2
+    bnez t1, mul_loopc   # Repeat until all bits are processed
+#################################################################################
     slli a0, a0, 2
     jal malloc 
     beq a0, x0, error_malloc
@@ -286,9 +318,19 @@ classify:
     mv a0, s10 # load o array into first arg
     lw t0, 0(s3)
     lw t1, 0(s6)
-    mul a1, t0, t1 # load length of array into second arg
+#################################################################################
+    # mul a1, t0, t1 # load length of array into second arg
     # FIXME: Replace 'mul' with your own implementation
-    
+    li a1 ,0
+mul_loopd:
+    andi t2, t1, 1      # t2 = t1 & 1, check the least significant bit of the multiplier (Q0)
+    beqz t2, skip_addd   # If the least significant bit of t3 is 0, skip the addition
+    add  a1 ,a1, t0     # If the least significant bit is 1, add the multiplicand to the result
+skip_addd:
+    slli t0, t0, 1      # Left shift the multiplicand by 1, equivalent to multiplying by 2
+    srli t1, t1, 1      # Right shift the multiplier by 1, equivalent to dividing by 2
+    bnez t1, mul_loopd   # Repeat until all bits are processed
+#################################################################################
     jal argmax
     
     mv t0, a0 # move return value of argmax into t0
